@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={``}>
+        <body>
           <header className="flex justify-end items-center p-4 gap-4 h-16">
             <SignedOut>
               <SignInButton />
