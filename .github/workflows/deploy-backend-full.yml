@@ -1,0 +1,13 @@
+name: Deploy Entire backend
+
+on:
+  push:
+    branches: [ "main", "test-cicd" ]
+
+jobs:
+  setup-go:
+    uses: ./.github/workflows/setup-go.yml
+  build:
+    uses: ./.github/workflows/build-docker-image.yml
+  deploy:
+    uses: ./.github/workflows/deploy-backend.yml
