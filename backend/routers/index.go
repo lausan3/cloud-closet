@@ -1,7 +1,7 @@
 package routers
 
 import (
-	"cloudcloset/routers/routes"
+	"main/routers/routes"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

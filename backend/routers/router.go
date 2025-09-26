@@ -1,7 +1,7 @@
 package routers
 
 import (
-	"cloudcloset/routers/middleware"
+	"main/routers/middleware"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"

@@ -1,7 +1,7 @@
 package config
 
 import (
-	logger "cloudcloset/infra/logger"
+	logger "main/infra/logger"
 
 	"github.com/spf13/viper"
 )

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"cloudcloset/config"
-	"cloudcloset/infra/logger"
-	"cloudcloset/routers"
+	"main/config"
+	"main/infra/logger"
+	"main/routers"
 )
 
 func main() {

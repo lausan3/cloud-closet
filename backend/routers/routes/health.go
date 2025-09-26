@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"cloudcloset/controllers"
+	"main/controllers"
 
 	"github.com/gin-gonic/gin"
 )
