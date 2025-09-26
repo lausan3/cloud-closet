@@ -7,8 +7,6 @@ import (
 type ServerConfiguration struct {
 	Host string
 	Port string
-
-	GinMode string
 }
 
 func (sc ServerConfiguration) ServerString() string {

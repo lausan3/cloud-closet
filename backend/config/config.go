@@ -18,9 +18,8 @@ func SetupConfig(config *Configuration) error {
 	}
 
 	config.Server = ServerConfiguration{
-		Host:    viper.GetString("SERVER_HOST"),
-		Port:    viper.GetString("SERVER_PORT"),
-		GinMode: viper.GetString("GIN_MODE"),
+		Host: viper.GetString("SERVER_HOST"),
+		Port: viper.GetString("SERVER_PORT"),
 	}
 
 	return nil
