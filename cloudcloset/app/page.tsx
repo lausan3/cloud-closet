@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Sidebar from "./sidebar";
+
 import {
   ClerkProvider,
   SignInButton,
@@ -13,8 +13,7 @@ export default function Home() {
   return (
     <ClerkProvider>
       <html lang="en">
-        <body>
-          <Sidebar/>
+        <body className={``}>
           <header className="flex justify-end items-center p-4 gap-4 h-16">
             <SignedOut>
               <SignInButton />
