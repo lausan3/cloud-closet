@@ -5,103 +5,88 @@ import {
   SignedOut,
   SignInButton,
   SignUpButton,
-  UserButton,
 } from "@clerk/nextjs";
 
 export default function LandingPage() {
   return (
-    <>
-      {/* Top bar */}
-      <header className="flex items-center justify-between px-6 py-4">
-        <Link href="/" className="font-semibold tracking-tight">
-          Cloud Closet
-        </Link>
+    <main className="min-h-screen bg-[#0c0c0c] text-zinc-200">
+      <div className="mx-auto max-w-6xl px-6 py-10 md:py-16">
+        {/* 2-column layout (right a bit wider) */}
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-[1fr_1.6fr] items-center">
+          {/* Left: Brand / Auth */}
+          <section className="space-y-4">
+            {/* Logo row */}
+            <div className="flex items-center gap-3">
+              <img
+                src="/logo.png"
+                alt="logo"
+                className="w-10 h-10 object-contain"
+              />
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-semibold tracking-wide">
+                  CLOUD CLOSET
+                </h1>
+                <p className="text-xs text-zinc-400 -mt-0.5">
+                  Dress smarter not harder
+                </p>
+              </div>
+            </div>
 
-        <nav className="flex items-center gap-3">
-          <SignedOut>
-            <SignInButton mode="modal">
-              <button className="h-9 rounded-full px-4 text-sm font-medium border">
-                Sign in
-              </button>
-            </SignInButton>
-            <SignUpButton mode="modal">
-              <button className="h-9 rounded-full px-4 text-sm font-medium bg-[#6c47ff] text-white">
-                Get started
-              </button>
-            </SignUpButton>
-          </SignedOut>
+            {/* Auth links */}
+            <div className="pt-3 text-sm text-zinc-400">
+              <SignedOut>
+                <span className="mr-2">
+                  <SignInButton mode="modal">
+                    <button className="underline-offset-2 hover:underline">
+                      Login
+                    </button>
+                  </SignInButton>
+                </span>
+                /
+                <span className="ml-2">
+                  <SignUpButton mode="modal">
+                    <button className="underline-offset-2 hover:underline">
+                      Sign Up
+                    </button>
+                  </SignUpButton>
+                </span>
+              </SignedOut>
 
-          <SignedIn>
-            <UserButton appearance={{ elements: { avatarBox: "h-8 w-8" } }} />
-          </SignedIn>
-        </nav>
-      </header>
+              <SignedIn>
+                <Link
+                  href="/dashboard"
+                  className="inline-flex h-9 items-center rounded-full bg-white/10 px-4 text-sm text-white hover:bg-white/15"
+                >
+                  Go to dashboard
+                </Link>
+              </SignedIn>
+            </div>
+          </section>
 
-      {/* Hero */}
-      <main className="px-6 py-16">
-        <section className="mx-auto max-w-3xl text-center">
-          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">
-            Your AI-powered digital wardrobe
-          </h1>
-          <p className="mt-4 text-base sm:text-lg text-muted-foreground">
-            Upload clothes, get smart outfit ideas, and plan looks in seconds.
-          </p>
+          {/* Right: Image demo card */}
+          <section>
+            <div className="relative">
+              {/* soft glow behind the frame */}
+              <div className="pointer-events-none absolute -inset-6 rounded-[32px] bg-[radial-gradient(60%_60%_at_50%_0%,rgba(255,255,255,0.08),transparent_70%)] blur-xl" />
 
-          <div className="mt-8 flex items-center justify-center gap-3">
-            <SignedOut>
-              <SignUpButton mode="modal">
-                <button className="h-11 rounded-full px-6 text-sm sm:text-base font-medium bg-[#6c47ff] text-white">
-                  Create free account
-                </button>
-              </SignUpButton>
-              <SignInButton mode="modal">
-                <button className="h-11 rounded-full px-6 text-sm sm:text-base font-medium border">
-                  I already have an account
-                </button>
-              </SignInButton>
-            </SignedOut>
+              <div className="relative rounded-[28px] border border-white/10 bg-white/5 p-3 md:p-4 backdrop-blur-xl shadow-[0_0_0_1px_rgba(255,255,255,0.02)_inset,0_40px_80px_-40px_rgba(0,0,0,0.6)]">
+                <div className="rounded-[22px] ring-1 ring-white/10 overflow-hidden bg-black/40">
+                  <img
+                    src="/demo.png"
+                    alt="Demo preview"
+                    className="block w-full h-auto object-contain md:h-[560px]"
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
 
-            <SignedIn>
-              <Link
-                href="/dashboard"
-                className="h-11 inline-flex items-center justify-center rounded-full px-6 text-sm sm:text-base font-medium bg-[#6c47ff] text-white"
-              >
-                Go to dashboard
-              </Link>
-            </SignedIn>
-          </div>
-
-          <p className="mt-3 text-xs text-muted-foreground">
-            No credit card required.
-          </p>
-        </section>
-
-        {/* Features (optional) */}
-        <section className="mx-auto mt-16 grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="rounded-2xl border p-5">
-            <h3 className="font-semibold">Smart outfits</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              AI suggests looks from items you already own.
-            </p>
-          </div>
-          <div className="rounded-2xl border p-5">
-            <h3 className="font-semibold">Plan your week</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Build a calendar of fits for any occasion.
-            </p>
-          </div>
-          <div className="rounded-2xl border p-5">
-            <h3 className="font-semibold">Easy uploads</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Drag & drop images—no complicated steps.
-            </p>
-          </div>
-        </section>
-      </main>
-
-      <footer className="px-6 py-8 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} Cloud Closet
-      </footer>
-    </>
+        {/* Footer */}
+        <footer className="mt-12 text-center text-xs text-zinc-500">
+          © {new Date().getFullYear()} Cloud Closet
+        </footer>
+      </div>
+    </main>
   );
 }
