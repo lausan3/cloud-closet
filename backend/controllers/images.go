@@ -70,15 +70,15 @@ type ImageBody struct {
 func (ic *ImageController) GetImagesForUser(c *gin.Context) {
 	var s3Client *s3.Client = c.MustGet("s3").(*s3.Client)
 
-	var body ImageBody
-	if err := c.ShouldBindBodyWithJSON(&body); err != nil {
-		logger.Errorf("Failed to bind request body: %v. Error: %v", body, err)
+	userId := c.Query("userId")
+	if userId == "" {
+		logger.Errorf("Missing userId query parameter")
 
-		c.JSON(400, gin.H{"error": "Invalid request body. You are possibly missing a userId field."})
+		c.JSON(400, gin.H{"error": "Missing userId query parameter"})
 		return
 	}
 
-	var objectPrefix string = fmt.Sprintf("%s/", body.UserID)
+	var objectPrefix string = fmt.Sprintf("%s/", userId)
 
 	listParams := &s3.ListObjectsV2Input{
 		Bucket: aws.String("cloudcloset-uploads"),
