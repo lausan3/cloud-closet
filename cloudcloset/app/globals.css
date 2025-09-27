@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 body{
   background-color: #212121;
+  overflow-y: hidden;
 }
 
 .uppy-DashboardContent-back{

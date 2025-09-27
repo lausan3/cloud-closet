@@ -125,7 +125,7 @@ export default function Sidebar(){
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-[#303030] rounded-lg p-6 max-w-4xl max-h-[80vh] w-full mx-4 overflow-hidden relative">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-white">Preview Files</h2>
+              <h2 className="text-xl font-semibold text-[#A9A9A9]">Preview Files</h2>
               <button
                 onClick={handleCancelUpload}
                 className="text-gray-400 hover:text-white text-2xl"
@@ -140,7 +140,7 @@ export default function Sidebar(){
                   <div key={file.id} className="bg-[#212121] rounded-lg p-3 relative group">
                     <button
                       onClick={() => removeFile(file.id)}
-                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute top-2 right-2 bg-red-500 text-[#A9A9A9] rounded-full w-6 h-6 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity"
                     >
                       ×
                     </button>
@@ -198,7 +198,7 @@ export default function Sidebar(){
               </button>
               <button
                 onClick={handleConfirmUpload}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                className="px-4 py-2 bg-[#212121] text-white rounded hover:bg-blue-700 transition-colors"
                 disabled={previewFiles.length === 0}
               >
                 Upload {previewFiles.length} file{previewFiles.length !== 1 ? 's' : ''}
@@ -252,7 +252,7 @@ export default function Sidebar(){
           {/* Show CLOTHES if 'menu' button is active */}
           {activeButton === 'menu' && (
             <div key="cloth" className="w-[80%] pt-[2vw] pb-[3vw] text-[#A9A9AA]">
-              <div className='w-[25%] h-[3vh] bg-gradient-to-b from-[#303030] to-transparent fixed top-0 '></div>
+              <div className='w-[25%] h-[8vh] bg-gradient-to-b from-[#303030] to-transparent fixed top-0 '></div>
               {/* Hide Dashboard when preview is active */}
               {!showPreview && (
                 <div>
@@ -305,6 +305,8 @@ export default function Sidebar(){
     </div>
   )
 }
+
+
 
 const clothes = [
   {
