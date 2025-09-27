@@ -15,5 +15,6 @@ func ImageRoutes(engine *gin.Engine, s3Client *s3.Client) {
 
 	images.Use(middleware.S3Middleware(s3Client))
 
+	images.GET("", ic.GetImagesForUser)
 	images.POST("", ic.UploadImage)
 }
