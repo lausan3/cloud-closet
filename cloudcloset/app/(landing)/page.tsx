@@ -63,7 +63,7 @@ export default function LandingPage() {
                 <div className="rounded-[22px] ring-1 ring-white/10 overflow-hidden bg-black/40 aspect-video">
                   <iframe
                     className="w-full h-full"
-                    src="https://www.youtube.com/embed/jfKfPfyJRdk?si=KNbpopQ9XU-arsjF&controls=0"
+                    src="https://www.youtube.com/embed/gmLHUvq3NJE?si=Ee9d67KnAs_32iHF&amp;controls=0" 
                     title="YouTube video player"
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -84,3 +84,5 @@ export default function LandingPage() {
     </main>
   );
 }
+
+
