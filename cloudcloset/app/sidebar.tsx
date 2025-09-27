@@ -18,7 +18,7 @@ interface PreviewFile {
 }
 
 export default function Sidebar() {
-  const { userId } = useAuth();
+  const { userId, isLoaded } = useAuth();
 
   // --- State ---
   const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
@@ -36,7 +36,7 @@ export default function Sidebar() {
     });
 
     uppyInstance.use(XHRUpload, {
-      endpoint: "http://localhost:8000/images",
+      endpoint: `http://${process.env.NEXT_PUBLIC_API_URL}/images`,
       fieldName: "files",
       formData: true,
     });
@@ -46,16 +46,23 @@ export default function Sidebar() {
 
   // --- Fetch clothes from API ---
   useEffect(() => {
+
     const fetchClothes = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/images`);
+        const response = await fetch(`http://${process.env.NEXT_PUBLIC_API_URL}/images?userId=${userId}`);
         if (!response.ok) throw new Error("Failed to fetch clothes");
+
         const data = await response.json();
-        setClothes(data);
+
+        const { closetItems } = data;
+
+        setClothes(closetItems);
+        console.log(userId)
       } catch (error) {
         console.error("Error fetching clothes:", error);
       }
     };
+    fetchClothes();
     fetchClothes();
   }, []);
 
