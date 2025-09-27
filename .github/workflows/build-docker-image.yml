@@ -11,16 +11,6 @@ on:
         required: true
       DOCKERHUB_TAGS:
         required: true
-  workflow_call:
-    secrets:
-      BACKEND_ENV:
-        required: true
-      DOCKERHUB_USERNAME:
-        required: true
-      DOCKERHUB_TOKEN:
-        required: true
-      DOCKERHUB_TAGS:
-        required: true
 
 jobs:
   build:
