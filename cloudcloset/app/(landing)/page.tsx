@@ -6,6 +6,7 @@ import {
   SignInButton,
   SignUpButton,
 } from "@clerk/nextjs";
+import { RainbowButton } from "@/components/ui/rainbow-button";
 
 export default function LandingPage() {
   return (
@@ -30,23 +31,16 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="pt-3 text-sm text-zinc-400 translate-x-25">
+            <div className="pt-3 translate-x-12">
               <SignedOut>
-                <span className="mr-2">
+                <div className="flex gap-3">
                   <SignInButton mode="modal">
-                    <button className="underline-offset-2 hover:underline">
-                      Login
-                    </button>
+                    <RainbowButton>Login</RainbowButton>
                   </SignInButton>
-                </span>
-                /
-                <span className="ml-2">
                   <SignUpButton mode="modal">
-                    <button className="underline-offset-2 hover:underline">
-                      Sign Up
-                    </button>
+                    <RainbowButton>Sign Up</RainbowButton>
                   </SignUpButton>
-                </span>
+                </div>
               </SignedOut>
 
               <SignedIn>
