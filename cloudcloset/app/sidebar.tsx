@@ -53,7 +53,7 @@ export default function Sidebar() {
 
       const url = response.uploadURL;
       
-      const uploadResponse = fetch(url, {
+      fetch(url, {
         method: "PUT",
         headers: {
           'Content-Type': file.type,
@@ -229,8 +229,8 @@ export default function Sidebar() {
         </div>
       )}
 
-      {/* tab container - hidden when preview is active */}
-      {/* {!showPreview && (
+{/* 
+      {!showPreview && (
         <div className={'rounded-tl-[1vw] rounded-bl-[1vw] bg-[#A9A9A9] w-[2.5vw] h-[10vw] inline-block mt-[5vw]'}>
           
 
@@ -249,6 +249,8 @@ export default function Sidebar() {
             </button>
           </div>
           
+
+
           <div 
             className={`w-[100%] h-[25%] ${activeButton === 'saved' ? 'bg-[#303030]' : 'bg-[#A9A9A9]'}`}
           >
