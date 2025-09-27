@@ -3,7 +3,11 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -o main .
+
+ARG TARGETOS
+ARG TARGETARCH
+
+RUN GOOS=$TARGETOS GOARCH=$TARGETARCH go build .
 
 # Final minimal image
 FROM gcr.io/distroless/base-debian12
