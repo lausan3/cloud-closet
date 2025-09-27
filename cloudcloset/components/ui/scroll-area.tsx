@@ -48,7 +48,7 @@ function ScrollBar({
         "flex touch-none p-px transition-colors select-none bg-[#212121] mr-[1vw]",
         orientation === "vertical" &&
           // Made width thicker (w-3.5 instead of w-2.5)
-          "h-full w-3.5 border-l border-l-transparent",
+          "h-full w-2.5 border-l border-l-transparent",
         orientation === "horizontal" &&
           // Made height thicker (h-3.5 instead of h-2.5)
           "h-3.5 flex-col border-t border-t-transparent",
