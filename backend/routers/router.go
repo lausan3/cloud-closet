@@ -3,12 +3,13 @@ package routers
 import (
 	"main/routers/middleware"
 
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"google.golang.org/genai"
 )
 
-func NewRouter(chatbot *genai.Chat) *gin.Engine {
+func NewRouter(chatbot *genai.Chat, s3Client *s3.Client) *gin.Engine {
 	environment := viper.GetBool("DEBUG")
 
 	if environment {
@@ -29,7 +30,7 @@ func NewRouter(chatbot *genai.Chat) *gin.Engine {
 	router.Use(gin.Recovery())
 	router.Use(middleware.CORSMiddleware())
 
-	RegisterRoutes(router, chatbot)
+	RegisterRoutes(router, chatbot, s3Client)
 
 	return router
 }

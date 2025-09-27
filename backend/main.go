@@ -2,17 +2,19 @@ package main
 
 import (
 	"context"
-	"main/config"
+	environment "main/config"
 	"main/infra/logger"
 	"main/routers"
 
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"google.golang.org/genai"
 )
 
 func main() {
-	c := config.Configuration{}
+	c := environment.Configuration{}
 
-	if err := config.SetupConfig(&c); err != nil {
+	if err := environment.SetupConfig(&c); err != nil {
 		logger.Fatalf("Configuration could not be setup: %v", err)
 	}
 
@@ -20,6 +22,16 @@ func main() {
 
 	ctx := context.Background()
 
+	chatbot := newChatbot(ctx, &c)
+
+	s3Client := newS3Client(ctx)
+
+	router := routers.NewRouter(chatbot, s3Client)
+
+	logger.Fatalf("%v", router.Run(c.Server.ServerString()))
+}
+
+func newChatbot(ctx context.Context, c *environment.Configuration) *genai.Chat {
 	gemini, err := genai.NewClient(ctx, &genai.ClientConfig{
 		APIKey: c.Gemini.Key,
 	})
@@ -39,7 +51,17 @@ func main() {
 		logger.Fatalf("Failed to create chat session: %v", err)
 	}
 
-	router := routers.NewRouter(chatbot)
+	return chatbot
+}
 
-	logger.Fatalf("%v", router.Run(c.Server.ServerString()))
+func newS3Client(ctx context.Context) *s3.Client {
+	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion("us-east-1"))
+
+	if err != nil {
+		logger.Fatalf("unable to load SDK config, %v", err)
+	}
+
+	s3 := s3.NewFromConfig(cfg)
+
+	return s3
 }

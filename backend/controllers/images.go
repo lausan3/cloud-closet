@@ -1,0 +1,57 @@
+package controllers
+
+import (
+	"fmt"
+	"main/infra/logger"
+
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+)
+
+type ImageController struct{}
+
+type ImageBody struct {
+	UserID       string  `form:"userId" binding:"required"`
+	Name         string  `form:"name" binding:"required"`
+	Type         string  `form:"type" binding:"required"`
+	RelativePath *string `form:"relativePath"`
+}
+
+func (ic *ImageController) UploadImage(c *gin.Context) {
+	var s3Client *s3.Client = c.MustGet("s3").(*s3.Client)
+
+	var body ImageBody
+	if err := c.ShouldBind(&body); err != nil {
+		logger.Errorf("Failed to bind request body: %v. Error: %v", body, err)
+
+		c.JSON(400, gin.H{"error": "Invalid request body. You are possibly missing a name or type field."})
+		return
+	}
+
+	uuid := uuid.New()
+
+	var objectKey string = fmt.Sprintf("%s/%s", body.UserID, uuid.String())
+
+	presignClient := s3.NewPresignClient(s3Client)
+
+	params := &s3.PutObjectInput{
+		Bucket: aws.String("cloudcloset-uploads"),
+		Key:    aws.String(objectKey),
+	}
+
+	put, err := presignClient.PresignPutObject(c, params)
+
+	if err != nil {
+		logger.Errorf("Failed to generate presigned URL: %v", err)
+
+		c.JSON(500, gin.H{"error": "Failed to generate presigned URL: " + err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"url":    put.URL,
+		"method": put.Method,
+	})
+}
