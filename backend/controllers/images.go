@@ -55,3 +55,57 @@ func (ic *ImageController) UploadImage(c *gin.Context) {
 		"method": put.Method,
 	})
 }
+
+type ClosetItem struct {
+	ID     string   `json:"id"`
+	UserID string   `json:"userId,omitempty"`
+	Source string   `json:"src"`
+	Tags   []string `json:"tags"`
+}
+
+type GetImagesBody struct {
+	UserID string `form:"userId" binding:"required"`
+}
+
+func (ic *ImageController) GetImagesForUser(c *gin.Context) {
+	var s3Client *s3.Client = c.MustGet("s3").(*s3.Client)
+
+	var body GetImagesBody
+	if err := c.ShouldBind(&body); err != nil {
+		logger.Errorf("Failed to bind request body: %v. Error: %v", body, err)
+
+		c.JSON(400, gin.H{"error": "Invalid request body. You are possibly missing a userId field."})
+		return
+	}
+
+	var objectPrefix string = fmt.Sprintf("%s/", body.UserID)
+
+	listParams := &s3.ListObjectsV2Input{
+		Bucket: aws.String("cloudcloset-uploads"),
+		Prefix: aws.String(objectPrefix),
+	}
+
+	listOutput, err := s3Client.ListObjectsV2(c, listParams)
+
+	if err != nil {
+		logger.Errorf("Failed to list objects in S3: %v", err)
+
+		c.JSON(500, gin.H{"error": "Failed to list objects in S3: " + err.Error()})
+		return
+	}
+
+	var items []ClosetItem
+
+	for _, object := range listOutput.Contents {
+		item := ClosetItem{
+			ID:     (*object.Key)[len(objectPrefix):],
+			Source: fmt.Sprintf("https://cloudcloset-uploads.s3.amazonaws.com/%s", *object.Key),
+			Tags:   []string{},
+		}
+		items = append(items, item)
+	}
+
+	c.JSON(200, gin.H{
+		"closetItems": items,
+	})
+}
