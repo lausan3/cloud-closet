@@ -38,7 +38,7 @@ export default function Chatbox() {
 
 
   const sendMessage = async (message: string): Promise<ChatResponse> => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL + "/chats/message";
+    const apiUrl = "http://" + process.env.NEXT_PUBLIC_API_URL + "/chats/message";
 
 if (!apiUrl) {
   throw new Error("API URL is not defined in .env");
