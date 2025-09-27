@@ -140,7 +140,7 @@ export default function Sidebar(){
                   <div
                     key={item.id}
                     onClick={() => setExpandedItemId(prevId => (prevId === item.id ? null : item.id))}
-                    className={`group mb-[.5vw] flex items-start p-2 rounded-lg overflow-hidden cursor-pointer transition-all duration-300 ease-in-out hover:bg-[#212121] ${isExpanded ? 'max-h-96 bg-[#212121] shadow-lg' : 'max-h-[2.5vw]'}`}
+                    className={`group mb-[.5vw] flex items-start p-2 rounded-lg overflow-hidden cursor-pointer transition-all duration-300 ease-in-out hover:bg-[#212121] ${isExpanded ? 'max-h-96 bg-[#212121] shadow-lg w-[70%]' : 'max-h-[2.5vw] w-[70%]'}`}
                   >
                     <div className="mr-[1vw] flex-shrink-0">
                       <img
