@@ -41,8 +41,16 @@ func newChatbot(ctx context.Context, c *environment.Configuration) *genai.Chat {
 		logger.Fatalf("Failed to create Gemini client: %v", err)
 	}
 
-	systemPrompt := `You are an outfit stylist that helps users find outfits based on the clothes they have. At the moment, 
-	assume they have black slacks and whatever they tell you they have in their message.`
+	systemPrompt := `You are an outfit stylist that helps users find outfits based on the clothes they have. 
+		The front end will provide it to you in JSON format. Don't mention the JSON in your response.
+		
+		You should not make up clothes that they don't have in their closet.
+		
+		This message should be in JSON format with the following fields:
+		- "outfit": a string describing the outfit you recommend based on the clothes they have in their closet.
+		- "reasoning": a string explaining why you recommended this outfit based on the user's message and the clothes they have in their closet.
+		- "sources": an array of strings, where each string is a URL to an image of a clothing item from their closet that you used in your outfit recommendation.
+		`
 
 	chatbot, err := gemini.Chats.Create(ctx, "gemini-2.5-flash", &genai.GenerateContentConfig{
 		SystemInstruction: genai.NewContentFromText(systemPrompt, genai.RoleModel),

@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"os"
+
 	"github.com/gin-gonic/gin"
 	"google.golang.org/genai"
 )
@@ -19,8 +21,30 @@ func (ctrl *ChatController) SendChatStream(c *gin.Context) {
 
 	c.ShouldBindBodyWithJSON(&message)
 
-	// response := chatbot.SendStream(c, genai.NewPartFromText(message.Message))
-	response, err := chatbot.Send(c, genai.NewPartFromText(message.Message))
+	m := message.Message
+	stringified, err := os.ReadFile("./data/closet.json")
+
+	if err != nil {
+		c.JSON(500, gin.H{"There was an error reading clothes": err.Error()})
+		return
+	}
+
+	clothes := "\n\nHere are the clothes they have in their closet: " + string(stringified)
+
+	parts := []*genai.Part{
+		genai.NewPartFromText(m),
+		genai.NewPartFromText(clothes),
+	}
+
+	// for
+	// 	part := genai.Part{
+	// 		Text: m[i:min(i+100, len(m))],
+	// 	}
+
+	// 	parts = append(parts, &part)
+	// }
+
+	response, err := chatbot.Send(c, parts...)
 
 	if err != nil {
 		c.JSON(500, gin.H{"There was an error sending a message to AI": err.Error()})
@@ -31,18 +55,4 @@ func (ctrl *ChatController) SendChatStream(c *gin.Context) {
 		"message":      "Successfully got a response from our AI",
 		"chatResponse": response.Text(),
 	})
-
-	// c.Stream(func(w io.Writer) bool {
-	// 	for chunk, err := range response {
-	// 		if err != nil {
-	// 			return false
-	// 		}
-
-	// 		c.SSEvent("message", chunk.Text())
-	// 		time.Sleep(time.Second)
-	// 		return true
-	// 	}
-
-	// 	return true
-	// })
 }
