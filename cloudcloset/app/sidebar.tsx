@@ -4,8 +4,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import Uppy from '@uppy/core';
 import { Dashboard } from '@uppy/react';
 import XHRUpload from '@uppy/xhr-upload';
-import ImageEditor from '@uppy/image-editor';
-
 import '@uppy/core/css/style.min.css';
 import '@uppy/dashboard/css/style.min.css';
 import '@uppy/image-editor/css/style.min.css';
@@ -21,19 +19,19 @@ interface PreviewFile {
 
 export default function Sidebar() {
   const { userId } = useAuth();
-  const [expandedItemId, setExpandedItemId] = useState(null);
+
+  // --- State ---
+  const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
   const [activeButton, setActiveButton] = useState('menu');
   const [showPreview, setShowPreview] = useState(false);
   const [previewFiles, setPreviewFiles] = useState<PreviewFile[]>([]);
-  
+  const [clothes, setClothes] = useState<any[]>([]);
 
-  const [uppy] = useState(()=> {
+  // --- Initialize Uppy ---
+  const [uppy] = useState(() => {
     const uppyInstance = new Uppy({
       id: "file-uploader",
-      restrictions:{
-        maxNumberOfFiles: 10,
-        allowedFileTypes: [".jpg", ".png", ".jpeg"]
-      },
+      restrictions: { maxNumberOfFiles: 10, allowedFileTypes: [".jpg", ".png", ".jpeg"] },
       autoProceed: false,
     });
 
@@ -41,43 +39,28 @@ export default function Sidebar() {
       endpoint: "http://localhost:8000/images",
       fieldName: "files",
       formData: true,
-    })
+    });
 
     return uppyInstance;
-  })
+  });
 
-  useEffect(()=>{
-    const successHandler = (file:any, response: any) => {
-      console.log("File uploaded successfully: ", file.name);
-      console.log("Server response: ", response);
-
-      const url = response.uploadURL;
-      
-      fetch(url, {
-        method: "PUT",
-        headers: {
-          'Content-Type': file.type,
-        },
-        body: file.data,
-      }).then(res => {
-        if (!res.ok) {
-          throw new Error("Failed to upload to S3");
-        }
-        console.log("File uploaded to S3 successfully");
-      });
+  // --- Fetch clothes from API ---
+  useEffect(() => {
+    const fetchClothes = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/images`);
+        if (!response.ok) throw new Error("Failed to fetch clothes");
+        const data = await response.json();
+        setClothes(data);
+      } catch (error) {
+        console.error("Error fetching clothes:", error);
+      }
     };
+    fetchClothes();
+  }, []);
 
-    const errorHandler = (file:any, error:any) => {
-      console.error("Error uploading files:", file.name);
-      console.error("Error details: ", error);
-    }
-
-    const completeHandle = (result:any) => {
-      console.log("Upload complete! Files: ", result.successful);
-      setShowPreview(false); // Close preview after upload
-    }
-
-    // Handle file added to show preview
+  // --- Uppy event handlers ---
+  useEffect(() => {
     const fileAddedHandler = (file: any) => {
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -86,9 +69,8 @@ export default function Sidebar() {
           name: file.name,
           size: file.size,
           type: file.type,
-          preview: e.target?.result as string
+          preview: e.target?.result as string,
         };
-        
         setPreviewFiles(prev => [...prev, newPreviewFile]);
         setShowPreview(true);
       };
@@ -97,83 +79,86 @@ export default function Sidebar() {
       uppy.setFileMeta(file.id, { userId: userId });
     };
 
-    // Handle file removed
     const fileRemovedHandler = (file: any) => {
       setPreviewFiles(prev => prev.filter(f => f.id !== file.id));
     };
 
-    uppy.on("upload-success", successHandler);
-    uppy.on("upload-error", errorHandler);
-    uppy.on("complete", completeHandle);
+    const successHandler = (file: any, response: any) => {
+      console.log("File uploaded successfully: ", file.name);
+      console.log("Server response: ", response);
+
+      const url = response.uploadURL;
+      if (url) {
+        fetch(url, {
+          method: "PUT",
+          headers: { "Content-Type": file.type },
+          body: file.data,
+        }).then(res => {
+          if (!res.ok) throw new Error("Failed to upload to S3");
+          console.log("File uploaded to S3 successfully");
+        });
+      }
+    };
+
+    const errorHandler = (file: any, error: any) => {
+      console.error("Error uploading files:", file.name, error);
+    };
+
+    const completeHandler = (result: any) => {
+      console.log("Upload complete! Files:", result.successful);
+      setShowPreview(false);
+      setPreviewFiles([]); // clear previews after upload
+    };
+
+    // Register handlers
     uppy.on("file-added", fileAddedHandler);
     uppy.on("file-removed", fileRemovedHandler);
+    uppy.on("upload-success", successHandler);
+    uppy.on("upload-error", errorHandler);
+    uppy.on("complete", completeHandler);
 
+    // Cleanup
     return () => {
-      uppy.off("upload-success", successHandler);
-      uppy.off("upload-error", errorHandler);
-      uppy.off("complete", completeHandle);
       uppy.off("file-added", fileAddedHandler);
       uppy.off("file-removed", fileRemovedHandler);
-    }
-  }, [uppy]);
+      uppy.off("upload-success", successHandler);
+      uppy.off("upload-error", errorHandler);
+      uppy.off("complete", completeHandler);
+    };
+  }, [uppy, userId]);
 
-  const handleConfirmUpload = () => {
-    uppy.upload();
-  };
-
-  const handleCancelUpload = () => {
-    uppy.cancelAll();
-    setPreviewFiles([]);
-    setShowPreview(false);
-  };
-
-  const removeFile = (fileId: string) => {
-    uppy.removeFile(fileId);
-  };
-
+  // --- Helper functions ---
+  const handleConfirmUpload = () => uppy.upload();
+  const handleCancelUpload = () => { uppy.cancelAll(); setPreviewFiles([]); setShowPreview(false); };
+  const removeFile = (fileId: string) => uppy.removeFile(fileId);
   const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
-  
+
+  // --- Render ---
   return (
-    <div className={'flex ml-[5vw]'}>
-      {/* Preview Modal */}
+    <div className="flex ml-[5vw]">
+      {/* --- Preview Modal --- */}
       {showPreview && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-[#303030] rounded-lg p-6 max-w-4xl max-h-[80vh] w-full mx-4 overflow-hidden relative">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold text-[#A9A9A9]">Preview Files</h2>
-              <button
-                onClick={handleCancelUpload}
-                className="text-gray-400 hover:text-white text-2xl"
-              >
-                ×
-              </button>
+              <button onClick={handleCancelUpload} className="text-gray-400 hover:text-white text-2xl">×</button>
             </div>
-            
+
             <ScrollArea className="h-96 mb-4">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {previewFiles.map((file) => (
+                {previewFiles.map(file => (
                   <div key={file.id} className="bg-[#212121] rounded-lg p-3 relative group">
-                    <button
-                      onClick={() => removeFile(file.id)}
-                      className="absolute top-2 right-2 bg-red-500 text-[#A9A9A9] rounded-full w-6 h-6 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      ×
-                    </button>
-                    
+                    <button onClick={() => removeFile(file.id)} className="absolute top-2 right-2 bg-red-500 text-[#A9A9A9] rounded-full w-6 h-6 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity">×</button>
                     <div className="aspect-square mb-2 rounded overflow-hidden bg-gray-700">
-                      <img
-                        src={file.preview}
-                        alt={file.name}
-                        className="w-full h-full object-cover"
-                      />
+                      <img src={file.preview} alt={file.name} className="w-full h-full object-cover" />
                     </div>
-                    
                     <div className="text-sm text-gray-300">
                       <p className="truncate font-medium">{file.name}</p>
                       <p className="text-gray-400">{formatFileSize(file.size)}</p>
@@ -182,46 +167,23 @@ export default function Sidebar() {
                 ))}
               </div>
             </ScrollArea>
-            
-            {/* Add more files button - bottom left */}
-            <button
-              onClick={() => {
-                // Trigger file browser
-                const fileInput = document.createElement('input');
-                fileInput.type = 'file';
-                fileInput.multiple = true;
-                fileInput.accept = '.jpg,.png,.jpeg';
-                fileInput.onchange = (e) => {
-                  const files = (e.target as HTMLInputElement).files;
-                  if (files) {
-                    Array.from(files).forEach(file => {
-                      uppy.addFile({
-                        name: file.name,
-                        type: file.type,
-                        data: file,
-                      });
-                    });
-                  }
-                };
-                fileInput.click();
-              }}
-              className="absolute bottom-6 left-6 w-12 h-12 bg-[#A9A9A9] hover:bg-[#8A8A8A] rounded-full flex items-center justify-center text-white text-2xl transition-colors"
-            >
-              +
-            </button>
-            
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={handleCancelUpload}
-                className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleConfirmUpload}
-                className="px-4 py-2 bg-[#212121] text-white rounded hover:bg-blue-700 transition-colors"
-                disabled={previewFiles.length === 0}
-              >
+
+            {/* Add more files button */}
+            <button onClick={() => {
+              const fileInput = document.createElement("input");
+              fileInput.type = "file";
+              fileInput.multiple = true;
+              fileInput.accept = ".jpg,.png,.jpeg";
+              fileInput.onchange = (e) => {
+                const files = (e.target as HTMLInputElement).files;
+                if (files) Array.from(files).forEach(file => uppy.addFile({ name: file.name, type: file.type, data: file }));
+              };
+              fileInput.click();
+            }} className="absolute bottom-6 left-6 w-12 h-12 bg-[#A9A9A9] hover:bg-[#8A8A8A] rounded-full flex items-center justify-center text-white text-2xl transition-colors">+</button>
+
+            <div className="flex justify-end gap-3 mt-4">
+              <button onClick={handleCancelUpload} className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors">Cancel</button>
+              <button onClick={handleConfirmUpload} className="px-4 py-2 bg-[#212121] text-white rounded hover:bg-blue-700 transition-colors" disabled={previewFiles.length === 0}>
                 Upload {previewFiles.length} file{previewFiles.length !== 1 ? 's' : ''}
               </button>
             </div>
@@ -229,81 +191,33 @@ export default function Sidebar() {
         </div>
       )}
 
-
-
-      <ScrollArea className={'bg-[#303030] h-[100vh] w-[29vw] inline-block'}>
+      {/* --- Sidebar --- */}
+      <ScrollArea className="bg-[#303030] h-[100vh] w-[29vw] inline-block">
         <div className="flex justify-center">
-          
-          {/* Show CLOTHES if 'menu' button is active */}
           {activeButton === 'menu' && (
-            <div key="cloth" className="w-[80%] pt-[2vw] pb-[3vw] text-[#A9A9AA]">
-              <div className='w-[25%] h-[8vh] bg-gradient-to-b from-[#303030] to-transparent fixed top-0 '></div>
-              {/* Hide Dashboard when preview is active */}
+            <div className="w-[80%] pt-[2vw] pb-[3vw] text-[#A9A9AA]">
+              <div className="w-[25%] h-[8vh] bg-gradient-to-b from-[#303030] to-transparent fixed top-0"></div>
               {!showPreview && (
-                <div>
-                  <Dashboard
-                    uppy={uppy}
-                    height={450}
-                    note="Accepted file types: jpg, png, jpeg"
-                    proudlyDisplayPoweredByUppy={false}
-                    showLinkToFileUploadResult={false}
-                    showRemoveButtonAfterComplete={false}
-                  />
-                </div>
+                <Dashboard uppy={uppy} height={450} note="Accepted file types: jpg, png, jpeg" proudlyDisplayPoweredByUppy={false} showLinkToFileUploadResult={false} showRemoveButtonAfterComplete={false} />
               )}
-              {clothes.map((item) => {
+              {clothes.map(item => {
                 const isExpanded = item.id === expandedItemId;
                 return (
-                  <div
-                    key={item.id}
-                    onClick={() => setExpandedItemId(prevId => (prevId === item.id ? null : item.id))}
-                    className={`group mb-[.5vw] flex items-start p-2 rounded-lg overflow-hidden cursor-pointer transition-all duration-100 ease-in hover:bg-[#212121] ${isExpanded ? 'max-h-96 bg-[#212121] shadow-lg w-[100%]' : 'max-h-[2.5vw] w-[100%]'}`}
-                  >
-<div className="relative w-[2vw] aspect-square">
-  <img
-    id="clothes-icon"
-    className="mr-13  w-full h-full object-cover rounded-[.5vw] transition-colors duration-200 group-hover:filter group-hover:brightness-0 group-hover:invert"
-    src={item.src}
-    alt={item.tags[0] || 'Clothing item'}
-  />
-  <span className="text-xxxl rounded-[.5vw]  bg-[#A9A9AA] absolute inset-0 flex items-center justify-center text-black font-bold opacity-0 group-hover:opacity-100 text-lg cursor-pointer">
-    ×
-  </span>
-</div>
-
+                  <div key={item.id} onClick={() => setExpandedItemId(prev => prev === item.id ? null : item.id)} className={`group mb-[.5vw] flex items-start p-2 rounded-lg overflow-hidden cursor-pointer transition-all duration-100 ease-in hover:bg-[#212121] ${isExpanded ? 'max-h-96 bg-[#212121] shadow-lg w-[100%]' : 'max-h-[2.5vw] w-[100%]'}`}>
+                    <div className="relative w-[2vw] aspect-square">
+                      <img id="clothes-icon" className="mr-13 w-full h-full object-cover rounded-[.5vw] transition-colors duration-200 group-hover:filter group-hover:brightness-0 group-hover:invert" src={item.src} alt={item.tags[0] || 'Clothing item'} />
+                      <span className="text-xxxl rounded-[.5vw] bg-[#A9A9AA] absolute inset-0 flex items-center justify-center text-black font-bold opacity-0 group-hover:opacity-100 text-lg cursor-pointer">×</span>
+                    </div>
                     <div className="min-w-0">
-                      <p className={`ml-3.5 text-[.7vw] leading-tight ${isExpanded ? '' : 'line-clamp-2'}`}>
-                        {item.tags.join(', ')}
-                      </p>
+                      <p className={`ml-3.5 text-[.7vw] leading-tight ${isExpanded ? '' : 'line-clamp-2'}`}>{item.tags.join(', ')}</p>
                     </div>
                   </div>
                 );
               })}
             </div>
           )}
-
         </div>
       </ScrollArea>
     </div>
-  )
+  );
 }
-
-const [clothes, setClothes] = useState<any[]>([]);
-
-useEffect(() => {
-  const fetchClothes = async () => {
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/images`);
-      if (!response.ok) throw new Error("Failed to fetch clothes");
-      const data = await response.json();
-      setClothes(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  fetchClothes();
-  console.log(clothes)
-}, []);
-
-
