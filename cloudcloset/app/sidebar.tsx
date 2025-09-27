@@ -25,23 +25,6 @@ export default function Sidebar(){
       },
       autoProceed: false,
     });
-    uppyInstance.use(ImageEditor, {
-      cropperOptions:{
-        aspectRatio: undefined,
-        viewMode: 1,
-      },
-      actions:{
-        revert: true,
-        rotate:true,
-        granularRotate: true,
-        flip: true,
-        zoomIn: true,
-        zoomOut: true,
-        cropSquare: true,
-        cropWidescreen: true,
-        cropWidescreenVertical: true,
-      },
-    });
 
 
     uppyInstance.use(XHRUpload, {
