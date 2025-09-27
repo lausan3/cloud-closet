@@ -43,10 +43,12 @@ export default function Sidebar(){
       },
     });
 
+
     uppyInstance.use(XHRUpload, {
       endpoint: "PLACEHOLDER",
       fieldName: "files"
     })
+
     return uppyInstance;
   })
 
@@ -122,6 +124,7 @@ export default function Sidebar(){
             <div key="cloth" className="w-[80%] pt-[4vw] pb-[3vw] text-[#A9A9AA]">
               <div>
                 <Dashboard
+                theme='dark'
                   uppy={uppy}
                   height={450}
                   note="Accepted file types: jpg, png, jpeg"
