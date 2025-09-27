@@ -9,13 +9,11 @@ import {
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen bg-[#0c0c0c] text-zinc-200">
-      <div className="mx-auto max-w-6xl px-6 py-10 md:py-16">
-        {/* 2-column layout (right a bit wider) */}
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-[1fr_1.6fr] items-center">
+    <main className="min-h-screen bg-[#0c0c0c] text-zinc-200 ">
+      <div className="mx-auto max-w-7xl px-6 py-10 md:py-16 translate-y-20">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-[1fr_3fr] items-center">
           {/* Left: Brand / Auth */}
           <section className="space-y-4">
-            {/* Logo row */}
             <div className="flex items-center gap-3">
               <img
                 src="/logo.png"
@@ -32,8 +30,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Auth links */}
-            <div className="pt-3 text-sm text-zinc-400">
+            <div className="pt-3 text-sm text-zinc-400 translate-x-25">
               <SignedOut>
                 <span className="mr-2">
                   <SignInButton mode="modal">
@@ -63,18 +60,21 @@ export default function LandingPage() {
             </div>
           </section>
 
-          {/* Right: Image demo card */}
+          {/* Right: YouTube embed with glassy frame */}
           <section>
             <div className="relative">
-              {/* soft glow behind the frame */}
               <div className="pointer-events-none absolute -inset-6 rounded-[32px] bg-[radial-gradient(60%_60%_at_50%_0%,rgba(255,255,255,0.08),transparent_70%)] blur-xl" />
 
               <div className="relative rounded-[28px] border border-white/10 bg-white/5 p-3 md:p-4 backdrop-blur-xl shadow-[0_0_0_1px_rgba(255,255,255,0.02)_inset,0_40px_80px_-40px_rgba(0,0,0,0.6)]">
-                <div className="rounded-[22px] ring-1 ring-white/10 overflow-hidden bg-black/40">
-                  <img
-                    src="/demo.png"
-                    alt="Demo preview"
-                    className="block w-full h-auto object-contain md:h-[560px]"
+                <div className="rounded-[22px] ring-1 ring-white/10 overflow-hidden bg-black/40 aspect-video">
+                  <iframe
+                    className="w-full h-full"
+                    src="https://www.youtube.com/embed/jfKfPfyJRdk?si=KNbpopQ9XU-arsjF&controls=0"
+                    title="YouTube video player"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen
                   />
                 </div>
               </div>
