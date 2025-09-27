@@ -177,7 +177,9 @@ export default function Chatbox() {
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Type your message here..."
-              className="text-white w-full px-4 py-3 bg-[#303030] rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+className="text-white w-full px-4 py-3 bg-[#303030] rounded-2xl 
+focus:outline-none focus:ring-2 focus:ring-[#A9A9A9] focus:border-transparent resize-none"
+
               rows={1}
               style={{ minHeight: "44px", maxHeight: "120px" }}
               disabled={isLoading}
@@ -187,7 +189,7 @@ export default function Chatbox() {
           <button
             type="submit"
             disabled={isLoading || !inputMessage.trim()}
-            className="bg-[#303030] text-white px-6 py-3 rounded-2xl font-medium hover:from-indigo-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
+            className="bg-[#303030] text-white px-6 py-3 rounded-2xl font-medium hover:bg-[#A9A9A9] hover:text-[#303030] focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
           >
             {isLoading ? (
               <div className="w-5 h-5 -2 rounded-full animate-spin text-white"></div>
@@ -198,7 +200,9 @@ export default function Chatbox() {
         </form>
       </div>
     </div>
+    <div id="gradient" className="bg-gradient-to-b from-[#212121] to-transparent fixed top-0 h-[29vh] w-[50vw]"></div>
     </div>
 
   );
 }
+// bg-gradient-to-b from-[#303030] to-transparent fixed top-0

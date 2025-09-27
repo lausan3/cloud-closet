@@ -26,7 +26,7 @@ export default function Home() {
   <Sidebar />
   <div className="p-[3vw] flex flex-col h-[1vw]">
     {/* Logo */}
-    <div id="LOGO">
+    <div id="LOGO" className="z-99">
       <div className="flex items-center gap-3">
         <img
           src="/logo.png"
