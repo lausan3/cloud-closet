@@ -83,35 +83,41 @@
     "id": 6,
     "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfUsNHOtU9K1wSCT0YqqSKN86IBgqvAwOnsg&s",
     "tags": [
-      "red",
-      "dress",
-      "floral print",
-      "bohemian",
-      "long-sleeved v-neck midi dress",
-      "flowy",
-      "romantic and chic all-over botanical pattern",
-      "womens casual wear"
+      "parachute",
+      "womens casual wear",
+      "pants",
+      "loose",
+      "orange",
+      "elastic",
+      "casual",
+      "colorful"
     ]
   },
   {
     "id": 7,
     "src": "https://i.pinimg.com/236x/5f/26/29/5f2629317872dc57c76437bc20ab77b2.jpg",
     "tags": [
-      "green",
-      "plaid",
-      "flannel shirt",
+      "blue jeans",
+      "denim",
+      "light wash",
+      "baggy fit",
+      "relaxed fit",
+      "wide-leg jeans",
+      "utilitarian style",
+      "streetwear",
       "casual",
-      "long-sleeved button-down",
-      "rustic",
-      "classic green and black tartan check pattern",
-      "comfortable and warm outerwear"
+      "patch detail",
+      "high-waisted",
+      "womens fashion",
+      "carpenter jeans"
     ]
   },
   {
     "id": 8,
     "src": "https://m.media-amazon.com/images/I/61HknRN0TcL._UY1000_.jpg",
     "tags": [
-      "blue",
+      "black",
+      "red undershirt",
       "denim jacket",
       "casual",
       "jean jacket",
@@ -125,14 +131,19 @@
     "id": 9,
     "src": "https://franklinandpoe.com/cdn/shop/products/SSM_7912_2000x3001.jpg?v=1665591043",
     "tags": [
-      "blue",
-      "jeans",
-      "denim",
-      "selvedge",
-      "dark wash straight-leg denim",
+      "brown leather",
+      "shearling jacket",
+      "aviator jacket",
+      "bomber jacket",
+      "mens fashion",
+      "outerwear",
+      "winter coat",
+      "sheepskin collar",
       "classic",
-      "mens high-quality raw denim trousers",
-      "durable five-pocket style casual pants"
+      "vintage style",
+      "rugged",
+      "warm",
+      "zippered front"
     ]
   },
   {
@@ -203,7 +214,7 @@
     "src": "https://upload.wikimedia.org/wikipedia/commons/6/64/Baseball_cap.png",
     "category": "accessories",
     "tags": [
-      "red",
+      "dark grey",
       "hat",
       "baseball cap",
       "sporty",
