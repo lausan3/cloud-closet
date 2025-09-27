@@ -8,18 +8,18 @@ jobs:
   setup-go:
     uses: ./.github/workflows/setup-go.yml
     
-  build:
-    uses: ./.github/workflows/build-docker-image.yml
-    needs: setup-go
-    secrets:
-      BACKEND_ENV: ${{ secrets.BACKEND_ENV }}
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-      DOCKERHUB_TAGS: ${{ secrets.DOCKERHUB_TAGS }}
+  # build:
+  #   uses: ./.github/workflows/build-docker-image.yml
+  #   needs: setup-go
+  #   secrets:
+  #     BACKEND_ENV: ${{ secrets.BACKEND_ENV }}
+  #     DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  #     DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+  #     DOCKERHUB_TAGS: ${{ secrets.DOCKERHUB_TAGS }}
 
   deploy:
     uses: ./.github/workflows/deploy-backend.yml
-    needs: [setup-go, build]
+    needs: [setup-go]
     with:
       CONTAINER_NAME: ${{ vars.CONTAINER_NAME }}
     secrets: 
