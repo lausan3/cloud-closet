@@ -58,7 +58,6 @@ func (ic *ImageController) UploadImage(c *gin.Context) {
 
 type ClosetItem struct {
 	ID     string   `json:"id"`
-	UserID string   `json:"userId,omitempty"`
 	Source string   `json:"src"`
 	Tags   []string `json:"tags"`
 }
@@ -80,6 +79,8 @@ func (ic *ImageController) GetImagesForUser(c *gin.Context) {
 
 	var objectPrefix string = fmt.Sprintf("%s/", userId)
 
+	logger.Infof("Fetching images for userId: %s", userId)
+
 	listParams := &s3.ListObjectsV2Input{
 		Bucket: aws.String("cloudcloset-uploads"),
 		Prefix: aws.String(objectPrefix),
@@ -94,14 +95,30 @@ func (ic *ImageController) GetImagesForUser(c *gin.Context) {
 		return
 	}
 
+	logger.Infof("Found %d objects for userId: %s", len(listOutput.Contents), userId)
+
+	presignClient := s3.NewPresignClient(s3Client)
+
 	items := []ClosetItem{}
 
-	for _, object := range listOutput.Contents {
+	for _, item := range listOutput.Contents {
+		presignParam := &s3.GetObjectInput{
+			Bucket: aws.String("cloudcloset-uploads"),
+			Key:    item.Key,
+		}
+
+		presignGet, err := presignClient.PresignGetObject(c, presignParam)
+
+		if err != nil {
+			logger.Errorf("Failed to generate presigned URL: %v", err)
+		}
+
 		item := ClosetItem{
-			ID:     (*object.Key)[len(objectPrefix):],
-			Source: fmt.Sprintf("https://cloudcloset-uploads.s3.amazonaws.com/%s", *object.Key),
+			ID:     *item.Key,
+			Source: presignGet.URL,
 			Tags:   []string{},
 		}
+
 		items = append(items, item)
 	}
 

@@ -7,6 +7,7 @@ import (
 	"main/routers"
 
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"google.golang.org/genai"
 )
@@ -24,7 +25,7 @@ func main() {
 
 	chatbot := newChatbot(ctx, &c)
 
-	s3Client := newS3Client(ctx)
+	s3Client := newS3Client(ctx, &c)
 
 	router := routers.NewRouter(chatbot, s3Client)
 
@@ -54,8 +55,15 @@ func newChatbot(ctx context.Context, c *environment.Configuration) *genai.Chat {
 	return chatbot
 }
 
-func newS3Client(ctx context.Context) *s3.Client {
-	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion("us-east-1"))
+func newS3Client(ctx context.Context, c *environment.Configuration) *s3.Client {
+	cfg, err := config.LoadDefaultConfig(ctx,
+		config.WithRegion("us-east-1"),
+		config.WithCredentialsProvider(
+			credentials.NewStaticCredentialsProvider(
+				c.AWS.AccessKeyID, c.AWS.SecretAccessKey, "",
+			),
+		),
+	)
 
 	if err != nil {
 		logger.Fatalf("unable to load SDK config, %v", err)
