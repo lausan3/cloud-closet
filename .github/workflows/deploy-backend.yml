@@ -48,7 +48,7 @@ jobs:
             sudo docker pull ${{ secrets.DOCKERHUB_TAGS }}
             sudo docker stop ${{ vars.CONTAINER_NAME }}
             sudo docker rm -f ${{ vars.CONTAINER_NAME }}
-            sudo docker run -d -v ./.env:/app/.env --env-file ./.env --rm --name ${{ vars.CONTAINER_NAME }} ${{ secrets.DOCKERHUB_TAGS }}
+            sudo docker run -p 80:8000 -d -v ./.env:/app/.env --env-file ./.env --rm --name ${{ vars.CONTAINER_NAME }} ${{ secrets.DOCKERHUB_TAGS }}
 
       - name: Delete secrets from instance
         run: rm .env

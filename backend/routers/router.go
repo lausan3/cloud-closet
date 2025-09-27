@@ -18,6 +18,11 @@ func NewRouter(chatbot *genai.Chat) *gin.Engine {
 	}
 
 	allowedHosts := viper.GetString("ALLOWED_HOSTS")
+
+	if allowedHosts == "" {
+		allowedHosts = "0.0.0.0/0"
+	}
+
 	router := gin.New()
 	router.SetTrustedProxies([]string{allowedHosts})
 	router.Use(gin.Logger())
