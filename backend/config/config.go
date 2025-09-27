@@ -8,6 +8,7 @@ import (
 
 type Configuration struct {
 	Server ServerConfiguration
+	Gemini GeminiConfiguration
 }
 
 func SetupConfig(config *Configuration) error {
@@ -20,6 +21,10 @@ func SetupConfig(config *Configuration) error {
 	config.Server = ServerConfiguration{
 		Host: viper.GetString("SERVER_HOST"),
 		Port: viper.GetString("SERVER_PORT"),
+	}
+
+	config.Gemini = GeminiConfiguration{
+		Key: viper.GetString("GEMINI_KEY"),
 	}
 
 	return nil

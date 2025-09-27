@@ -5,9 +5,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
+	"google.golang.org/genai"
 )
 
-func NewRouter() *gin.Engine {
+func NewRouter(chatbot *genai.Chat) *gin.Engine {
 	environment := viper.GetBool("DEBUG")
 
 	if environment {
@@ -23,7 +24,7 @@ func NewRouter() *gin.Engine {
 	router.Use(gin.Recovery())
 	router.Use(middleware.CORSMiddleware())
 
-	RegisterRoutes(router)
+	RegisterRoutes(router, chatbot)
 
 	return router
 }
