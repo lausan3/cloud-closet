@@ -27,9 +27,6 @@ export default function Chatbox() {
   const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const API_URL =
-    "http://ec2-18-205-25-231.compute-1.amazonaws.com/chats/message";
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -38,8 +35,16 @@ export default function Chatbox() {
     scrollToBottom();
   }, [messages]);
 
+
+
   const sendMessage = async (message: string): Promise<ChatResponse> => {
-    const response = await fetch(API_URL, {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL + "/chats/message";
+
+if (!apiUrl) {
+  throw new Error("API URL is not defined in .env");
+}
+
+    const response = await fetch(apiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -99,7 +104,7 @@ export default function Chatbox() {
   // 👇 now we return JSX
   return (
     <div className="h-[39vw]">
-    <div className="flex-1 flex flex-col w-[40vw] ml-[3vw] mt-[3vw] h-[39vw]">
+    <div className="flex-1 flex flex-col w-[40vw]  mt-[3vw] h-[39vw]">
       {/* Chat Header */}
 
       {/* Messages */}
@@ -177,8 +182,8 @@ export default function Chatbox() {
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Type your message here..."
-className="text-white w-full px-4 py-3 bg-[#303030] rounded-2xl 
-focus:outline-none focus:ring-2 focus:ring-[#A9A9A9] focus:border-transparent resize-none"
+            className="text-white w-full px-4 py-3 bg-[#303030] rounded-2xl 
+              focus:outline-none focus:ring-2 focus:ring-[#A9A9A9] focus:border-transparent resize-none"
 
               rows={1}
               style={{ minHeight: "44px", maxHeight: "120px" }}

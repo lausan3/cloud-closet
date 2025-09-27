@@ -119,7 +119,7 @@ export default function Sidebar(){
   };
   
   return (
-    <div className={'flex ml-[5vw]'}>
+    <div className={'flex ml-[7vw]'}>
       {/* Preview Modal */}
       {showPreview && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -209,10 +209,10 @@ export default function Sidebar(){
       )}
 
       {/* tab container - hidden when preview is active */}
-      {!showPreview && (
+      {/* {!showPreview && (
         <div className={'rounded-tl-[1vw] rounded-bl-[1vw] bg-[#A9A9A9] w-[2.5vw] h-[10vw] inline-block mt-[5vw]'}>
           
-          {/* menu button */}
+
           <div 
             className={`w-[100%] h-[25%] mb-[1vw] mt-[85%] ${activeButton === 'menu' ? 'bg-[#303030]' : 'bg-[#A9A9A9]'}`}
           >
@@ -228,7 +228,7 @@ export default function Sidebar(){
             </button>
           </div>
           
-          {/* saved button */}
+
           <div 
             className={`w-[100%] h-[25%] ${activeButton === 'saved' ? 'bg-[#303030]' : 'bg-[#A9A9A9]'}`}
           >
@@ -244,7 +244,7 @@ export default function Sidebar(){
             </button>
           </div>
         </div>
-      )}
+      )} */}
 
       <ScrollArea className={'bg-[#303030] h-[100vh] w-[29vw] inline-block'}>
         <div className="flex justify-center">
@@ -292,14 +292,14 @@ export default function Sidebar(){
             </div>
           )}
 
-          {/* Show OUTFITS if 'saved' button is active */}
+          {/* Show OUTFITS if 'saved' button is active
           {activeButton === 'saved' && (
             <div key="outfits" className="w-[80%] pt-[4vw] pb-[3vw] text-[#A9A9AA]">
-              {/* You can build your outfits list here */}
+              You can build your outfits list here
               <h1>Outfits will be displayed here.</h1>
             </div>
           )}
-          
+           */}
         </div>
       </ScrollArea>
     </div>
