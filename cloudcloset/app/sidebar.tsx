@@ -9,6 +9,7 @@ import ImageEditor from '@uppy/image-editor';
 import '@uppy/core/css/style.min.css';
 import '@uppy/dashboard/css/style.min.css';
 import '@uppy/image-editor/css/style.min.css';
+import { useAuth } from '@clerk/nextjs';
 
 interface PreviewFile {
   id: string;
@@ -18,11 +19,13 @@ interface PreviewFile {
   preview: string;
 }
 
-export default function Sidebar(){
+export default function Sidebar() {
+  const { userId } = useAuth();
   const [expandedItemId, setExpandedItemId] = useState(null);
   const [activeButton, setActiveButton] = useState('menu');
   const [showPreview, setShowPreview] = useState(false);
   const [previewFiles, setPreviewFiles] = useState<PreviewFile[]>([]);
+  
 
   const [uppy] = useState(()=> {
     const uppyInstance = new Uppy({
@@ -35,8 +38,9 @@ export default function Sidebar(){
     });
 
     uppyInstance.use(XHRUpload, {
-      endpoint: "PLACEHOLDER",
-      fieldName: "files"
+      endpoint: "http://localhost:8000/images",
+      fieldName: "files",
+      formData: true,
     })
 
     return uppyInstance;
@@ -46,6 +50,21 @@ export default function Sidebar(){
     const successHandler = (file:any, response: any) => {
       console.log("File uploaded successfully: ", file.name);
       console.log("Server response: ", response);
+
+      const url = response.uploadURL;
+      
+      const uploadResponse = fetch(url, {
+        method: "PUT",
+        headers: {
+          'Content-Type': file.type,
+        },
+        body: file.data,
+      }).then(res => {
+        if (!res.ok) {
+          throw new Error("Failed to upload to S3");
+        }
+        console.log("File uploaded to S3 successfully");
+      });
     };
 
     const errorHandler = (file:any, error:any) => {
@@ -74,6 +93,8 @@ export default function Sidebar(){
         setShowPreview(true);
       };
       reader.readAsDataURL(file.data);
+
+      uppy.setFileMeta(file.id, { userId: userId });
     };
 
     // Handle file removed
@@ -119,7 +140,7 @@ export default function Sidebar(){
   };
   
   return (
-    <div className={'flex ml-[7vw]'}>
+    <div className={'flex ml-[5vw]'}>
       {/* Preview Modal */}
       {showPreview && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -228,7 +249,6 @@ export default function Sidebar(){
             </button>
           </div>
           
-
           <div 
             className={`w-[100%] h-[25%] ${activeButton === 'saved' ? 'bg-[#303030]' : 'bg-[#A9A9A9]'}`}
           >

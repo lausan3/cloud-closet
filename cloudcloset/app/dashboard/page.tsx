@@ -1,5 +1,4 @@
-
-import { SignedOut, SignInButton, SignUpButton, SignedIn, UserButton } from "@clerk/nextjs";
+import { SignedOut, SignInButton, SignUpButton, SignedIn, UserButton, useAuth } from "@clerk/nextjs";
 import Sidebar from "../sidebar";
 import Chatbox from "../chatbox";
 
