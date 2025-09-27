@@ -121,10 +121,10 @@ export default function Sidebar(){
           
           {/* Show CLOTHES if 'menu' button is active */}
           {activeButton === 'menu' && (
-            <div key="cloth" className="w-[80%] pt-[4vw] pb-[3vw] text-[#A9A9AA]">
+            <div key="cloth" className="w-[80%] pt-[2vw] pb-[3vw] text-[#A9A9AA]">
+              <div className='w-[25%] h-[27%] bg-gradient-to-b from-[#303030] to-transparent fixed top-0 '></div>
               <div>
                 <Dashboard
-                theme='dark'
                   uppy={uppy}
                   height={450}
                   note="Accepted file types: jpg, png, jpeg"
@@ -140,7 +140,7 @@ export default function Sidebar(){
                   <div
                     key={item.id}
                     onClick={() => setExpandedItemId(prevId => (prevId === item.id ? null : item.id))}
-                    className={`group mb-[.5vw] flex items-start p-2 rounded-lg overflow-hidden cursor-pointer transition-all duration-300 ease-in-out hover:bg-[#212121] ${isExpanded ? 'max-h-96 bg-[#212121] shadow-lg w-[70%]' : 'max-h-[2.5vw] w-[70%]'}`}
+                    className={`group mb-[.5vw] flex items-start p-2 rounded-lg overflow-hidden cursor-pointer transition-all duration-100 ease-in hover:bg-[#212121] ${isExpanded ? 'max-h-96 bg-[#212121] shadow-lg w-[100%]' : 'max-h-[2.5vw] w-[100%]'}`}
                   >
                     <div className="mr-[1vw] flex-shrink-0">
                       <img
