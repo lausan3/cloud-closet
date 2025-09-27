@@ -12,7 +12,7 @@ import (
 
 type ImageController struct{}
 
-type ImageBody struct {
+type UploadImageBody struct {
 	UserID       string  `form:"userId" binding:"required"`
 	Name         string  `form:"name" binding:"required"`
 	Type         string  `form:"type" binding:"required"`
@@ -22,7 +22,7 @@ type ImageBody struct {
 func (ic *ImageController) UploadImage(c *gin.Context) {
 	var s3Client *s3.Client = c.MustGet("s3").(*s3.Client)
 
-	var body ImageBody
+	var body UploadImageBody
 	if err := c.ShouldBind(&body); err != nil {
 		logger.Errorf("Failed to bind request body: %v. Error: %v", body, err)
 
@@ -63,15 +63,15 @@ type ClosetItem struct {
 	Tags   []string `json:"tags"`
 }
 
-type GetImagesBody struct {
+type ImageBody struct {
 	UserID string `form:"userId" binding:"required"`
 }
 
 func (ic *ImageController) GetImagesForUser(c *gin.Context) {
 	var s3Client *s3.Client = c.MustGet("s3").(*s3.Client)
 
-	var body GetImagesBody
-	if err := c.ShouldBind(&body); err != nil {
+	var body ImageBody
+	if err := c.ShouldBindBodyWithJSON(&body); err != nil {
 		logger.Errorf("Failed to bind request body: %v. Error: %v", body, err)
 
 		c.JSON(400, gin.H{"error": "Invalid request body. You are possibly missing a userId field."})
@@ -94,7 +94,7 @@ func (ic *ImageController) GetImagesForUser(c *gin.Context) {
 		return
 	}
 
-	var items []ClosetItem
+	items := []ClosetItem{}
 
 	for _, object := range listOutput.Contents {
 		item := ClosetItem{
@@ -107,5 +107,42 @@ func (ic *ImageController) GetImagesForUser(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"closetItems": items,
+	})
+}
+
+type DeleteImageBody struct {
+	ImageBody
+	ImageID string `form:"imageId" binding:"required"`
+}
+
+func (ic *ImageController) DeleteImage(c *gin.Context) {
+	var s3Client *s3.Client = c.MustGet("s3").(*s3.Client)
+
+	var body DeleteImageBody
+	if err := c.ShouldBindBodyWithJSON(&body); err != nil {
+		logger.Errorf("Failed to bind request body: %v. Error: %v", body, err)
+
+		c.JSON(400, gin.H{"error": "Invalid request body. You are possibly missing an userId or imageId field."})
+		return
+	}
+
+	var objectKey string = fmt.Sprintf("%s/%s", body.UserID, body.ImageID)
+
+	deleteParams := &s3.DeleteObjectInput{
+		Bucket: aws.String("cloudcloset-uploads"),
+		Key:    aws.String(objectKey),
+	}
+
+	_, err := s3Client.DeleteObject(c, deleteParams)
+
+	if err != nil {
+		logger.Errorf("Failed to delete object in S3: %v", err)
+
+		c.JSON(500, gin.H{"error": "Failed to delete object in S3: " + err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"message": "Successfully deleted image",
 	})
 }

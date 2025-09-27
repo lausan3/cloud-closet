@@ -17,4 +17,5 @@ func ImageRoutes(engine *gin.Engine, s3Client *s3.Client) {
 
 	images.GET("", ic.GetImagesForUser)
 	images.POST("", ic.UploadImage)
+	images.DELETE("", ic.DeleteImage)
 }
