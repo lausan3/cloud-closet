@@ -9,6 +9,7 @@ import (
 type Configuration struct {
 	Server ServerConfiguration
 	Gemini GeminiConfiguration
+	AWS    AWSConfiguration
 }
 
 func SetupConfig(config *Configuration) error {
@@ -25,6 +26,12 @@ func SetupConfig(config *Configuration) error {
 
 	config.Gemini = GeminiConfiguration{
 		Key: viper.GetString("GEMINI_KEY"),
+	}
+
+	config.AWS = AWSConfiguration{
+		AccessKeyID:     viper.GetString("AWS_ACCESS_KEY_ID"),
+		SecretAccessKey: viper.GetString("AWS_SECRET_ACCESS_KEY"),
+		Region:          viper.GetString("AWS_REGION"),
 	}
 
 	return nil

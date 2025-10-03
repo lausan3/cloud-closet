@@ -13,5 +13,6 @@ RUN GOOS=$TARGETOS GOARCH=$TARGETARCH go build .
 FROM gcr.io/distroless/base-debian12
 WORKDIR /app
 COPY --from=builder /app/main .
+COPY --from=builder /app/data ./data
 EXPOSE 8000
 CMD ["./main"]
